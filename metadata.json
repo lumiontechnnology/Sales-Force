@@ -1,0 +1,8 @@
+{
+  "name": "Nexus Intelligence - Sales & CX Platform",
+  "description": "A high-performance intelligence platform correlating sales performance with post-sale customer experience using predictive analytics and AI-driven coaching.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
