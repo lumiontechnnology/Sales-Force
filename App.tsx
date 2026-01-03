@@ -92,7 +92,11 @@ const App: React.FC = () => {
   }
 
   if (!currentUser) {
-    return <Login onLogin={() => {}} />; // Login handles its own logic with Supabase now
+    const onLogin = (user: any) => {
+      setCurrentUser(user);
+      setLoading(false);
+    };
+    return <Login onLogin={onLogin} />;
   }
 
   const renderContent = () => {

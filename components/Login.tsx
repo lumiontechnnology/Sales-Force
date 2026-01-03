@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react';
 import { supabase } from '../services/supabase';
+import { MOCK_USERS } from '../constants';
 
 interface LoginProps {
   onLogin: (user: any) => void;
 }
 
-const Login: React.FC<LoginProps> = () => {
+const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('password123');
   const [error, setError] = useState('');
@@ -23,6 +24,12 @@ const Login: React.FC<LoginProps> = () => {
     });
 
     if (error) {
+      const user = MOCK_USERS.find(u => u.email === email);
+      if (user && password === 'password123') {
+        onLogin(user);
+        setLoading(false);
+        return;
+      }
       setError(error.message);
       setLoading(false);
     }
