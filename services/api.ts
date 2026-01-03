@@ -91,10 +91,18 @@ export const db = {
       if (error) throw error;
       return data as User[];
     },
-    async create(profile: User) {
-      const { data, error } = await supabase.from('profiles').insert(profile).select().single();
+    async create(profile: Partial<User>) {
+      const payload: any = {
+        id: profile.id,
+        name: profile.name,
+        email: profile.email,
+        role: profile.role,
+        avatar: profile.avatar,
+        territory: profile.territory
+      };
+      const { data, error } = await supabase.from('profiles').insert(payload).select().single();
       if (error) throw error;
-      return data as User;
+      return { ...payload, ...data } as User;
     }
   },
   
