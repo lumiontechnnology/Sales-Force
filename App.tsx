@@ -107,7 +107,7 @@ const App: React.FC = () => {
       case AppFeature.TIMELINE: return <JourneyTimeline userRole={currentUser.role} events={timelineEvents} />;
       case AppFeature.SIMULATOR: return <TeamSimulator />;
       case AppFeature.STRATEGY: return <ArchDocs />;
-      case AppFeature.USER_MANAGEMENT: return <UserManagement />;
+      case AppFeature.USER_MANAGEMENT: return <UserManagement onImpersonate={(u) => setCurrentUser(u)} />;
       case AppFeature.FEATURE_SETTINGS: return <RoleConfigPanel permissions={permissions} onUpdate={handleUpdatePermissions} />;
       default: return <div className="p-20 text-center text-slate-400 font-bold">Select a feature</div>;
     }

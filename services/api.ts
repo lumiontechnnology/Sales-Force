@@ -90,6 +90,11 @@ export const db = {
       const { data, error } = await supabase.from('profiles').select('*');
       if (error) throw error;
       return data as User[];
+    },
+    async create(profile: User) {
+      const { data, error } = await supabase.from('profiles').insert(profile).select().single();
+      if (error) throw error;
+      return data as User;
     }
   },
   

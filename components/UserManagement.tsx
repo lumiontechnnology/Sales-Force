@@ -1,10 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MOCK_REPS } from '../constants';
 import { User, UserRole } from '../types';
+import { db } from '../services/api';
 
-const UserManagement: React.FC = () => {
-  const [users, setUsers] = useState<User[]>(MOCK_REPS);
+interface Props {
+  onImpersonate: (user: User) => void;
+}
+
+const UserManagement: React.FC<Props> = ({ onImpersonate }) => {
+  const [users, setUsers] = useState<User[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newUser, setNewUser] = useState({ 
     name: '', 
@@ -14,25 +19,52 @@ const UserManagement: React.FC = () => {
     target: '',
     appraisalPeriod: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleAdd = (e: React.FormEvent) => {
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await db.profiles.getAll();
+        setUsers(data && data.length ? data : MOCK_REPS);
+      } catch {
+        setUsers(MOCK_REPS);
+      }
+    })();
+  }, []);
+
+  const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
     const user: User = {
       id: `rm-${Date.now()}`,
-      ...newUser,
+      name: newUser.name,
+      email: newUser.email,
+      territory: newUser.territory,
+      role: newUser.role,
+      target: newUser.target,
+      appraisalPeriod: newUser.appraisalPeriod,
       avatar: `https://picsum.photos/seed/${newUser.name}/100/100`,
       performanceScore: 0
     };
-    setUsers([user, ...users]);
-    setShowAddModal(false);
-    setNewUser({ 
-      name: '', 
-      email: '', 
-      territory: '', 
-      role: UserRole.REP,
-      target: '',
-      appraisalPeriod: ''
-    });
+    try {
+      const created = await db.profiles.create(user);
+      setUsers([created, ...users]);
+      setShowAddModal(false);
+      setNewUser({ 
+        name: '', 
+        email: '', 
+        territory: '', 
+        role: UserRole.REP,
+        target: '',
+        appraisalPeriod: ''
+      });
+    } catch (err: any) {
+      setError(err.message || 'Failed to create user');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -94,11 +126,8 @@ const UserManagement: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
-                      <button className="w-8 h-8 rounded-lg border border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-200 transition-all">
-                        <i className="fas fa-edit text-xs"></i>
-                      </button>
-                      <button className="w-8 h-8 rounded-lg border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 transition-all">
-                        <i className="fas fa-trash-alt text-xs"></i>
+                      <button onClick={() => onImpersonate(user)} className="px-3 h-8 rounded-lg border border-indigo-200 text-indigo-600 hover:bg-indigo-50 font-bold text-[10px] uppercase">
+                        Use This User
                       </button>
                     </div>
                   </td>
@@ -186,8 +215,9 @@ const UserManagement: React.FC = () => {
                   />
                 </div>
               </div>
-              <button type="submit" className="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 shadow-xl shadow-indigo-500/20 transition-all">
-                Authenticate & Provision Profile
+              {error && <div className="bg-rose-500/10 border border-rose-500/20 p-4 rounded-xl text-xs text-rose-400 font-bold">{error}</div>}
+              <button type="submit" disabled={loading} className="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 disabled:opacity-50 shadow-xl shadow-indigo-500/20 transition-all">
+                {loading ? 'Provisioning...' : 'Authenticate & Provision Profile'}
               </button>
             </form>
           </div>
