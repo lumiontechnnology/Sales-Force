@@ -1,0 +1,80 @@
+[
+  {
+    "id": "acc-1",
+    "name": "Global Asset Partners",
+    "industry": "Hedge Fund",
+    "size": "Enterprise",
+    "churnRisk": 12,
+    "healthScore": 92,
+    "repId": "rm-001",
+    "aum": "$4.2B",
+    "riskCategory": "Low",
+    "lastCheckup": "2023-11-15",
+    "needsCheckup": false,
+    "onboardingProgress": 100,
+    "onboardingSteps": [
+      { "id": "s1", "name": "KYC Identity Verification", "status": "Completed", "category": "Compliance" },
+      { "id": "s2", "name": "AML Background Screening", "status": "Completed", "category": "Compliance" },
+      { "id": "s3", "name": "Institutional MSA Signing", "status": "Completed", "category": "Legal" },
+      { "id": "s4", "name": "Credit Line Underwriting", "status": "Completed", "category": "Credit" }
+    ]
+  },
+  {
+    "id": "acc-2",
+    "name": "Lighthouse FinTech",
+    "industry": "Payments",
+    "size": "Mid-Market",
+    "churnRisk": 68,
+    "healthScore": 38,
+    "repId": "rm-001",
+    "aum": "$120M",
+    "riskCategory": "High",
+    "lastCheckup": "2023-09-10",
+    "needsCheckup": true,
+    "onboardingProgress": 65,
+    "onboardingSteps": [
+      { "id": "s1", "name": "KYC Identity Verification", "status": "Completed", "category": "Compliance" },
+      { "id": "s2", "name": "AML Background Screening", "status": "In Progress", "category": "Compliance" },
+      { "id": "s3", "name": "Tax Residence Disclosure", "status": "Pending", "category": "Compliance" },
+      { "id": "s4", "name": "Operational Portal Setup", "status": "Completed", "category": "Operational" }
+    ]
+  },
+  {
+    "id": "acc-3",
+    "name": "Blue Chip Trust",
+    "industry": "Private Equity",
+    "size": "Enterprise",
+    "churnRisk": 8,
+    "healthScore": 95,
+    "repId": "rm-001",
+    "aum": "$12.8B",
+    "riskCategory": "Low",
+    "lastCheckup": "2023-12-05",
+    "needsCheckup": false,
+    "onboardingProgress": 100,
+    "onboardingSteps": [
+      { "id": "s1", "name": "KYC Identity Verification", "status": "Completed", "category": "Compliance" },
+      { "id": "s2", "name": "FATCA Documentation", "status": "Completed", "category": "Compliance" },
+      { "id": "s3", "name": "Board Resolution Review", "status": "Completed", "category": "Legal" }
+    ]
+  },
+  {
+    "id": "acc-4",
+    "name": "Venture Ridge",
+    "industry": "VC",
+    "size": "Mid-Market",
+    "churnRisk": 42,
+    "healthScore": 52,
+    "repId": "rm-002",
+    "aum": "$450M",
+    "riskCategory": "Medium",
+    "lastCheckup": "2023-10-20",
+    "needsCheckup": true,
+    "onboardingProgress": 25,
+    "onboardingSteps": [
+      { "id": "s1", "name": "KYC Identity Verification", "status": "In Progress", "category": "Compliance" },
+      { "id": "s2", "name": "Entity Structure Review", "status": "Pending", "category": "Legal" },
+      { "id": "s3", "name": "Initial Deposit Wire", "status": "Pending", "category": "Operational" }
+    ]
+  }
+]

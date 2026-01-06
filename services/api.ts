@@ -64,10 +64,14 @@ export const db = {
         // It assumes some profiles might already exist if users registered.
         
         // 1. Upsert Accounts
+        const isUUID = (v?: string) => !!v && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
         const { error: accError } = await supabase.from('accounts').upsert(
-          MOCK_ACCOUNTS.map(({ onboardingSteps, ...rest }) => ({
+          MOCK_ACCOUNTS.map(({ onboardingSteps, repId, ...rest }) => ({
             ...rest,
-            // onboardingSteps: JSON.stringify(onboardingSteps) // if using JSONB
+            // Only set rep_id when it's a valid UUID. Otherwise set to null to avoid invalid uuid insert errors.
+            rep_id: isUUID(repId) ? repId : null,
+            // If your DB uses JSONB for onboarding steps, uncomment and convert accordingly
+            // onboarding_steps: JSON.stringify(onboardingSteps)
           }))
         );
         if (accError) throw accError;
@@ -92,8 +96,10 @@ export const db = {
       return data as User[];
     },
     async create(profile: Partial<User>) {
+      const isUUID = (v?: string) => !!v && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
       const payload: any = {
-        id: profile.id,
+        // Only include explicit id when it's a valid UUID. Otherwise let DB/auth set it.
+        ...(isUUID(profile.id) ? { id: profile.id } : {}),
         name: profile.name,
         email: profile.email,
         role: profile.role,
@@ -108,11 +114,22 @@ export const db = {
   
   accounts: {
     async getAll(repId?: string) {
+      const isUUID = (v?: string) => !!v && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
       let query = supabase.from('accounts').select('*');
-      if (repId) query = query.eq('rep_id', repId);
+
+      // Only apply server-side UUID equality when repId is a valid UUID to avoid Postgres uuid parsing errors.
+      if (repId && isUUID(repId)) {
+        query = query.eq('rep_id', repId);
+        const { data, error } = await query;
+        if (error) throw error;
+        return data as Account[];
+      }
+
+      // Fallback: fetch all and filter client-side for non-UUID repIds (eg. local mocked ids like 'rm-001')
       const { data, error } = await query;
       if (error) throw error;
-      return data as Account[];
+      if (!repId) return data as Account[];
+      return (data ?? []).filter((a: any) => (a.rep_id === repId || a.repId === repId)) as Account[];
     }
   },
 
